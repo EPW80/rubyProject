@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: studioflow
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: studioflow_test
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U studioflow']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: test
+      DATABASE_URL: postgresql://studioflow:password@db/studioflow_development
+      DATABASE_TEST_URL: postgresql://studioflow:password@db/studioflow_test
+      JWT_SECRET_KEY: test_jwt_secret_key_for_tests_only
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    command: >
+      bash -c "
+        bundle exec rails db:create db:migrate &&
+        bundle exec rspec --format documentation
+      "
+
+volumes:
+  bundle_cache:

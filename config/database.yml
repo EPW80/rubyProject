@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  url: <%= ENV["DATABASE_URL"] %>
+
+development:
+  <<: *default
+  database: studioflow_development
+
+test:
+  <<: *default
+  url: <%= ENV.fetch("DATABASE_TEST_URL", ENV["DATABASE_URL"]) %>
+  database: studioflow_test
+
+production:
+  <<: *default
+  database: studioflow_production
+  url: <%= ENV["DATABASE_URL"] %>
