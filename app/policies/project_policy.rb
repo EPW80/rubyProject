@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/policies/project_policy.rb
 class ProjectPolicy < ApplicationPolicy
   def show?          = owner_or_member?

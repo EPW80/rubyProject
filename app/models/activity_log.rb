@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/activity_log.rb
 class ActivityLog < ApplicationRecord
   belongs_to :project

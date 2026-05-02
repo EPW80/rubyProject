@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Devise.setup do |config|
   config.mailer_sender = 'noreply@studioflow.app'
   require 'devise/orm/active_record'

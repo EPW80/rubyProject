@@ -1,4 +1,8 @@
-.claude/
+.claude/*
+!.claude/CLAUDE.md
+!.claude/settings.json
+.claude/local.md
+.claude/settings.local.json
 .vscode/
 *.env
 .env*

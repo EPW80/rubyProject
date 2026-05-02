@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # config/initializers/rack_attack.rb
 Rack::Attack.throttle('api/ip', limit: 60, period: 1.minute) do |req|
   req.ip if req.path.start_with?('/api/')

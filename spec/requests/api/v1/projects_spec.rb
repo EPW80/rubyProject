@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/requests/api/v1/projects_spec.rb
 require 'rails_helper'
 
@@ -12,20 +14,20 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     it 'returns all visible projects' do
       get api_v1_projects_path, headers: headers
       expect(response).to have_http_status(:ok)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['data']).to be_an(Array)
     end
 
     it 'filters by status' do
       get api_v1_projects_path, params: { status: 'active' }, headers: headers
-      json = JSON.parse(response.body)
-      expect(json['data'].pluck('attributes').map { |a| a['status'] }).to all(eq('active'))
+      json = response.parsed_body
+      expect(json['data'].pluck('attributes').pluck('status')).to all(eq('active'))
     end
 
     it 'paginates results' do
       create_list(:project, 30, owner: user)
       get api_v1_projects_path, params: { per_page: 10 }, headers: headers
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['data'].length).to be <= 10
       expect(json['meta']['total']).to be > 10
     end
@@ -33,7 +35,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     it 'filters by search query' do
       create(:project, name: 'Brand Refresh', owner: user)
       get api_v1_projects_path, params: { q: 'brand' }, headers: headers
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['data'].first.dig('attributes', 'name')).to match(/brand/i)
     end
   end
@@ -42,9 +44,9 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     let(:valid_params) do
       {
         project: {
-          name:     'New Silicon Valley Campaign',
-          client:   'TechVenture Inc.',
-          status:   'active',
+          name: 'New Silicon Valley Campaign',
+          client: 'TechVenture Inc.',
+          status: 'active',
           category: 'Web App',
           deadline: 2.months.from_now.to_date,
           tag_list: %w[React Rails TypeScript]
@@ -53,12 +55,12 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     end
 
     it 'creates a project successfully' do
-      expect {
+      expect do
         post api_v1_projects_path, params: valid_params.to_json, headers: headers
-      }.to change(Project, :count).by(1)
+      end.to change(Project, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json.dig('data', 'attributes', 'name')).to eq('New Silicon Valley Campaign')
     end
 
@@ -68,7 +70,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
            headers: headers
 
       expect(response).to have_http_status(:unprocessable_entity)
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['errors']).to include(match(/Name/), match(/Client/))
     end
   end
@@ -108,12 +110,12 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     let!(:project) { create(:project, owner: user) }
 
     it 'soft-deletes the project (discards, does not hard-delete)' do
-      expect {
+      expect do
         delete api_v1_project_path(project), headers: headers
-      }.not_to change(Project.with_discarded, :count)
+      end.not_to change(Project.with_discarded, :count)
 
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)['deleted']).to be(true)
+      expect(response.parsed_body['deleted']).to be(true)
       expect(project.reload.discarded_at).not_to be_nil
     end
 
@@ -136,7 +138,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
 
     it 'returns paginated activity logs' do
       get activity_api_v1_project_path(project), headers: headers
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(response).to have_http_status(:ok)
       expect(json['data'].length).to be <= 25
       expect(json['meta']).to include('total', 'page', 'per_page', 'pages')
@@ -145,7 +147,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
     it 'returns the second page when requested' do
       create_list(:activity_log, 10, project: project, user: user)
       get activity_api_v1_project_path(project), params: { page: 2 }, headers: headers
-      json = JSON.parse(response.body)
+      json = response.parsed_body
       expect(json['meta']['page']).to eq(2)
     end
   end

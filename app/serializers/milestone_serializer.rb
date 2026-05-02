@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/serializers/milestone_serializer.rb
 class MilestoneSerializer
   include JSONAPI::Serializer

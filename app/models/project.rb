@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 # app/models/project.rb
 class Project < ApplicationRecord
   include Discard::Model
+
   default_scope -> { kept }
 
   # ── Associations ──────────────────────────────────────────────────────────
@@ -22,16 +25,16 @@ class Project < ApplicationRecord
   scope :completed,  -> { where(status: 'completed') }
   scope :by_client,  ->(client) { where(client: client) }
   scope :recent,     -> { order(updated_at: :desc) }
-  scope :due_soon,   -> { where('deadline <= ?', 2.weeks.from_now).where.not(status: 'completed') }
+  scope :due_soon,   -> { where(deadline: ..2.weeks.from_now).where.not(status: 'completed') }
 
   # ── Enums ─────────────────────────────────────────────────────────────────
   enum :status, {
-    backlog:   'backlog',
-    active:    'active',
-    review:    'review',
-    on_hold:   'on_hold',
+    backlog: 'backlog',
+    active: 'active',
+    review: 'review',
+    on_hold: 'on_hold',
     completed: 'completed',
-    archived:  'archived'
+    archived: 'archived'
   }, prefix: true
 
   # ── Callbacks ─────────────────────────────────────────────────────────────
@@ -53,7 +56,8 @@ class Project < ApplicationRecord
   # Days until deadline
   def days_remaining
     return nil unless deadline
-    (deadline.to_date - Date.today).to_i
+
+    (deadline.to_date - Time.zone.today).to_i
   end
 
   def overdue?
@@ -62,21 +66,22 @@ class Project < ApplicationRecord
 
   def summary
     {
-      id:             id,
-      name:           name,
-      client:         client,
-      status:         status,
-      progress:       progress,
+      id: id,
+      name: name,
+      client: client,
+      status: status,
+      progress: progress,
       milestones_due: milestones.pending.due_soon.count,
-      overdue:        overdue?,
-      days_remaining: days_remaining,
+      overdue: overdue?,
+      days_remaining: days_remaining
     }
   end
 
   private
 
   def tag_list_within_limits
-    return unless tag_list.present?
+    return if tag_list.blank?
+
     errors.add(:tag_list, 'cannot exceed 20 tags') if tag_list.size > 20
     errors.add(:tag_list, 'each tag must be under 50 characters') if tag_list.any? { |t| t.length > 50 }
   end
@@ -87,8 +92,8 @@ class Project < ApplicationRecord
 
   def log_status_change
     activity_logs.create!(
-      action:   'status_changed',
-      user:     owner,
+      action: 'status_changed',
+      user: owner,
       metadata: { from: status_before_last_save, to: status }
     )
   end

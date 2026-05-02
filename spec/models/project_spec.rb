@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/models/project_spec.rb
 require 'rails_helper'
 
@@ -11,7 +13,9 @@ RSpec.describe Project, type: :model do
       expect(Project.statuses.keys).to match_array(%w[backlog active review on_hold completed archived])
       expect { build(:project, status: 'invalid_status') }.to raise_error(ArgumentError)
     end
-    it { is_expected.to validate_numericality_of(:progress).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100) }
+    it {
+      is_expected.to validate_numericality_of(:progress).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100)
+    }
   end
 
   describe 'associations' do

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: studioflow
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: studioflow_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.10
+          bundler-cache: true
+
+      - name: Create database
+        env:
+          DATABASE_URL: postgresql://studioflow:password@localhost/studioflow_test
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:create db:migrate
+
+      - name: Run RSpec
+        env:
+          DATABASE_URL: postgresql://studioflow:password@localhost/studioflow_test
+          JWT_SECRET_KEY: test_secret_key_not_for_production
+          RAILS_ENV: test
+        run: |
+          bundle exec rspec
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.10
+          bundler-cache: true
+
+      - name: Run RuboCop
+        run: |
+          bundle exec rubocop

@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 ruby '3.3.10'
 
-gem 'rails', '~> 7.2'
+gem 'bootsnap', require: false
 gem 'pg', '~> 1.5'
 gem 'puma', '~> 6.0'
 gem 'rack-cors'
-gem 'bootsnap', require: false
+gem 'rails', '~> 7.2'
 
 # Auth
 gem 'devise', '~> 4.9'
@@ -28,12 +30,12 @@ gem 'discard', '~> 1.4'
 gem 'rack-attack', '~> 6.7'
 
 group :development, :test do
-  gem 'rspec-rails', '~> 6.1'
-  gem 'factory_bot_rails', '~> 6.4'
-  gem 'shoulda-matchers', '~> 6.0'
-  gem 'faker', '~> 3.2'
   gem 'database_cleaner-active_record', '~> 2.1'
   gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot_rails', '~> 6.4'
+  gem 'faker', '~> 3.2'
+  gem 'rspec-rails', '~> 6.1'
+  gem 'shoulda-matchers', '~> 6.0'
 end
 
 group :development do

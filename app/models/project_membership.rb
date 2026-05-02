@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/models/project_membership.rb
 class ProjectMembership < ApplicationRecord
   belongs_to :project

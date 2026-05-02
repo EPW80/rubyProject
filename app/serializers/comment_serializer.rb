@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/serializers/comment_serializer.rb
 class CommentSerializer
   include JSONAPI::Serializer

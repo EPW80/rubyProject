@@ -1,7 +1,6 @@
-# Studioflow — Creative Project Management OS
-### Full Stack Portfolio Project · React + Ruby on Rails
+# Studioflow — Creative Project Management API
 
-Built to demonstrate production-level full-stack development
+Built to demonstrate production-level Rails API development
 
 ---
 
@@ -9,53 +8,45 @@ Built to demonstrate production-level full-stack development
 
 | Layer        | Technology                                |
 |--------------|-------------------------------------------|
-| Frontend     | React 18 (TypeScript), HTML5, CSS3        |
 | Backend      | Ruby on Rails 7 (API mode)                |
 | Database     | PostgreSQL (with JSONB & array columns)   |
-| Auth         | Devise + JWT (devise-jwt gem)             |
+| Auth         | Devise + JWT (hand-rolled)                |
 | Serialization| jsonapi-serializer                        |
 | Testing      | RSpec + FactoryBot + Shoulda-matchers     |
-| Style linting| RuboCop (standard Rails config)           |
-| JS tooling   | Vite + ESLint + Prettier                  |
+| Style linting| RuboCop                                   |
 | Soft deletes | discard gem                               |
 | Rate limiting| rack-attack                               |
 | Version ctrl | Git / GitHub (feature branch workflow)    |
-| Deployment   | AWS EC2 + RDS + S3 + CloudFront           |
+| Deployment   | AWS EC2 + RDS (target, not automated yet) |
 
 ---
 
 ## Architecture
 
+Rails 7 API-only application. Frontend is a separate repository.
+
 ```
-studioflow/
-├── frontend/                  # React 18 + TypeScript (Vite)
-│   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── pages/             # Route-level page components
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── api/               # Axios API client layer
-│   │   ├── store/             # Zustand global state
-│   │   └── types/             # TypeScript type definitions
-│   └── ...
-│
-└── rails-api/                 # Rails 7 API-only app
-    ├── app/
-    │   ├── controllers/
-    │   │   └── api/v1/        # Versioned REST controllers
-    │   ├── models/            # ActiveRecord models
-    │   ├── serializers/       # JSONAPI serializers
-    │   ├── policies/          # Pundit authorization
-    │   └── services/          # Service objects (business logic)
-    ├── db/
-    │   ├── migrate/           # Schema migrations
-    │   └── seeds.rb           # Development seed data
-    ├── config/
-    │   └── initializers/
-    │       └── rack_attack.rb # API rate limiting
-    └── spec/                  # RSpec test suite
-        ├── models/
-        ├── requests/
-        └── factories/
+studioflow-api/
+├── app/
+│   ├── controllers/
+│   │   └── api/v1/            # Versioned REST controllers
+│   ├── models/                # ActiveRecord models
+│   ├── serializers/           # JSONAPI serializers
+│   └── policies/              # Pundit authorization
+├── db/
+│   ├── migrate/               # Schema migrations
+│   └── seeds.rb               # Development seed data
+├── config/
+│   └── initializers/
+│       └── rack_attack.rb     # API rate limiting
+├── spec/                      # RSpec test suite
+│   ├── models/
+│   ├── requests/
+│   └── factories/
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # GitHub Actions CI
+└── docker-compose.yml         # Local development environment
 ```
 
 ---
