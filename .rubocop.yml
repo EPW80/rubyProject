@@ -19,6 +19,9 @@ Style/Documentation:
 Metrics/MethodLength:
   Max: 20
 
+Metrics/AbcSize:
+  Max: 25
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
@@ -27,3 +30,7 @@ Metrics/BlockLength:
 # Rails-specific
 Rails/I18nLocaleTexts:
   Enabled: false
+
+Rails/Exit:
+  Exclude:
+    - 'spec/rails_helper.rb'
