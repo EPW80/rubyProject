@@ -1,4 +1,4 @@
-# Studioflow Rails API
+# rubyProject Rails API
 
 A Rails 7.2 API-only application for creative project management. PostgreSQL backend with JSON:API serialization.
 

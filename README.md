@@ -1,4 +1,4 @@
-# Studioflow — Creative Project Management API
+# rubyProject — Creative Project Management API
 
 Built to demonstrate production-level Rails API development
 
@@ -26,7 +26,7 @@ Built to demonstrate production-level Rails API development
 Rails 7 API-only application. Frontend is a separate repository.
 
 ```
-studioflow-api/
+rubyProject/
 ├── app/
 │   ├── controllers/
 │   │   └── api/v1/            # Versioned REST controllers
@@ -100,7 +100,7 @@ studioflow-api/
 
 ```bash
 # Clone
-git clone git@github.com:your-handle/studioflow.git && cd studioflow
+git clone git@github.com:EPW80/rubyProject.git && cd rubyProject
 
 # Install dependencies
 bundle install
