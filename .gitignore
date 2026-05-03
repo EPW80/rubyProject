@@ -9,3 +9,24 @@
 log/*.log
 tmp/*
 !tmp/.keep
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Ruby / Rails
+.bundle/
+vendor/bundle/
+config/master.key
+config/credentials/*.key
+.byebug_history
+rerun.txt
+
+# Test output
+coverage/
+.rspec_status
+
+# IDE
+.idea/
