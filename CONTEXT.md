@@ -1,4 +1,4 @@
-# Domain Language — rubyProject
+# Domain Language — studioFlow
 
 Vocabulary for discussing this codebase without re-deriving concepts.
 
@@ -39,5 +39,5 @@ Progress is materialized (stored in `projects.progress` column). The method `#re
 ## Avoid
 
 - "Ticket" — use "issue" if borrowed; unused in this repo.
-- "Backlog manager" — this isn't a backlog tool; rubyProject is project-centric.
+- "Backlog manager" — this isn't a backlog tool; studioFlow is project-centric.
 - "Frontend" — this repo is API-only; frontend is separate.
