@@ -3,6 +3,7 @@
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::API
   include Pundit::Authorization
+  include Pagy::Backend
 
   rescue_from Pundit::NotAuthorizedError, with: :forbidden
   rescue_from ActiveRecord::RecordNotFound, with: :not_found

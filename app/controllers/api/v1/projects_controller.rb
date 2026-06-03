@@ -10,15 +10,16 @@ module Api
 
       # GET /api/v1/projects
       def index
-        @projects = policy_scope(Project)
-                    .includes(:owner, :members, :milestones)
-                    .recent
+        scope = policy_scope(Project)
+                .includes(:owner, :members, :milestones)
+                .recent
+        scope = apply_filters(scope)
 
-        @projects = apply_filters(@projects)
+        pagy, @projects = pagy(scope, limit: params[:per_page] || Pagy::DEFAULT[:limit])
 
         render json: ProjectSerializer.new(@projects, include: %w[owner milestones])
                      .serializable_hash
-                     .merge(meta: pagination_meta(@projects)),
+                     .merge(meta: pagination_meta(pagy)),
                status: :ok
       end
 
@@ -71,15 +72,15 @@ module Api
 
       # GET /api/v1/projects/:id/activity
       def activity
-        logs = @project.activity_logs
-                       .includes(:user)
-                       .order(created_at: :desc)
-                       .paginate(page: params[:page], per_page: 25)
+        scope = @project.activity_logs
+                        .includes(:user)
+                        .order(created_at: :desc)
+        pagy, logs = pagy(scope, limit: 25)
         render json: {
           data: logs.map do |l|
             { id: l.id, action: l.action, metadata: l.metadata, occurred_at: l.created_at }
           end,
-          meta: pagination_meta(logs)
+          meta: pagination_meta(pagy)
         }, status: :ok
       end
 
@@ -105,15 +106,15 @@ module Api
         scope = scope.where(status: params[:status]) if params[:status].present?
         scope = scope.by_client(params[:client]) if params[:client].present?
         scope = scope.where('name ILIKE ?', "%#{params[:q]}%") if params[:q].present?
-        scope.paginate(page: params[:page], per_page: params[:per_page] || 25)
+        scope
       end
 
-      def pagination_meta(collection)
+      def pagination_meta(pagy)
         {
-          total: collection.total_entries,
-          page: collection.current_page,
-          per_page: collection.per_page,
-          pages: collection.total_pages
+          total: pagy.count,
+          page: pagy.page,
+          per_page: pagy.limit,
+          pages: pagy.pages
         }
       end
     end

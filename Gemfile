@@ -21,7 +21,7 @@ gem 'pundit', '~> 2.4'
 gem 'jsonapi-serializer', '~> 2.2'
 
 # Pagination
-gem 'will_paginate', '~> 4.0'
+gem 'pagy', '~> 9.3'
 
 # Soft deletes
 gem 'discard', '~> 1.4'
