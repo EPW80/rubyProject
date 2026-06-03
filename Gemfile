@@ -24,7 +24,7 @@ gem 'jsonapi-serializer', '~> 2.2'
 gem 'pagy', '~> 9.3'
 
 # Soft deletes
-gem 'discard', '~> 1.4'
+gem 'discard', '~> 2.0'
 
 # Rate limiting
 gem 'rack-attack', '~> 6.7'
