@@ -37,7 +37,7 @@ group :development, :test do
   gem 'database_cleaner-active_record', '~> 2.1'
   gem 'debug', platforms: %i[mri mingw x64_mingw]
   gem 'factory_bot_rails', '~> 6.4'
-  gem 'faker', '~> 3.2'
+  gem 'faker', '~> 3.8'
   gem 'rspec-rails', '~> 6.1'
   gem 'shoulda-matchers', '~> 6.0'
 end
