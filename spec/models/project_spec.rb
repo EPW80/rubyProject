@@ -3,16 +3,18 @@
 # spec/models/project_spec.rb
 require 'rails_helper'
 
-RSpec.describe Project, type: :model do
+RSpec.describe Project do
   subject { build(:project) }
 
   describe 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:client) }
+
     it 'enforces valid status values via enum' do
-      expect(Project.statuses.keys).to match_array(%w[backlog active review on_hold completed archived])
+      expect(described_class.statuses.keys).to match_array(%w[backlog active review on_hold completed archived])
       expect { build(:project, status: 'invalid_status') }.to raise_error(ArgumentError)
     end
+
     it {
       is_expected.to validate_numericality_of(:progress).is_greater_than_or_equal_to(0).is_less_than_or_equal_to(100)
     }
@@ -48,12 +50,12 @@ RSpec.describe Project, type: :model do
 
     it 'is excluded from the default scope after discard' do
       project.discard!
-      expect(Project.find_by(id: project.id)).to be_nil
+      expect(described_class.find_by(id: project.id)).to be_nil
     end
 
     it 'is recoverable via with_discarded' do
       project.discard!
-      expect(Project.with_discarded.find(project.id)).to eq(project)
+      expect(described_class.with_discarded.find(project.id)).to eq(project)
     end
   end
 
@@ -92,7 +94,7 @@ RSpec.describe Project, type: :model do
     end
 
     it '.active returns only active projects' do
-      expect(Project.active.map(&:status)).to all(eq('active'))
+      expect(described_class.active.map(&:status)).to all(eq('active'))
     end
   end
 end

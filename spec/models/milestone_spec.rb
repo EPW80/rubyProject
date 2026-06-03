@@ -3,7 +3,7 @@
 # spec/models/milestone_spec.rb
 require 'rails_helper'
 
-RSpec.describe Milestone, type: :model do
+RSpec.describe Milestone do
   subject { build(:milestone) }
 
   describe 'validations' do
@@ -22,16 +22,16 @@ RSpec.describe Milestone, type: :model do
     let!(:imminent) { create(:milestone, project: project, completed: false, due_date: 3.days.from_now) }
 
     it '.completed returns only completed milestones' do
-      expect(Milestone.completed).to contain_exactly(done)
+      expect(described_class.completed).to contain_exactly(done)
     end
 
     it '.pending returns only incomplete milestones' do
-      expect(Milestone.pending).to contain_exactly(pending, imminent)
+      expect(described_class.pending).to contain_exactly(pending, imminent)
     end
 
     it '.due_soon returns milestones due within two weeks' do
-      expect(Milestone.due_soon).to include(imminent)
-      expect(Milestone.due_soon).not_to include(pending)
+      expect(described_class.due_soon).to include(imminent)
+      expect(described_class.due_soon).not_to include(pending)
     end
   end
 end

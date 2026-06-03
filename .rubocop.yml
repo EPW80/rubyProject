@@ -1,5 +1,8 @@
-require:
+plugins:
   - rubocop-rails
+  - rubocop-performance
+  - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   TargetRubyVersion: 3.3
@@ -34,3 +37,29 @@ Rails/I18nLocaleTexts:
 Rails/Exit:
   Exclude:
     - 'spec/rails_helper.rb'
+
+# RSpec: keep the existing lenient philosophy (metrics already relaxed above).
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+# The suite uses implicit `is_expected` one-liners for shoulda matchers.
+RSpec/ImplicitSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 4

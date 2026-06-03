@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::Auth::Sessions', type: :request do
+RSpec.describe 'Api::V1::Auth::Sessions' do
   let(:json_headers) { { 'Content-Type' => 'application/json' } }
   let!(:user) { create(:user, password: 'password123') }
 

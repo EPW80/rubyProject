@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::Auth::Registrations', type: :request do
+RSpec.describe 'Api::V1::Auth::Registrations' do
   let(:json_headers) { { 'Content-Type' => 'application/json' } }
 
   describe 'POST /api/v1/signup' do

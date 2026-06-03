@@ -3,7 +3,7 @@
 # spec/requests/api/v1/projects_spec.rb
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::Projects', type: :request do
+RSpec.describe 'Api::V1::Projects' do
   let(:user)    { create(:user) }
   let(:headers) { auth_headers(user) }
 
