@@ -8,7 +8,7 @@ gem 'bootsnap', require: false
 gem 'pg', '~> 1.5'
 gem 'puma', '~> 6.0'
 gem 'rack-cors'
-gem 'rails', '~> 7.2'
+gem 'rails', '~> 8.0'
 
 # Auth
 gem 'devise', '~> 4.9'
@@ -28,6 +28,10 @@ gem 'discard', '~> 1.4'
 
 # Rate limiting
 gem 'rack-attack', '~> 6.7'
+
+# Deployment: containerized HTTP/2 proxy (Thruster) and zero-downtime deploys (Kamal)
+gem 'kamal', '~> 2.4', require: false
+gem 'thruster', '~> 0.1', require: false
 
 group :development, :test do
   gem 'database_cleaner-active_record', '~> 2.1'

@@ -69,7 +69,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
            params: { project: { name: '', client: '' } }.to_json,
            headers: headers
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       json = response.parsed_body
       expect(json['errors']).to include(match(/Name/), match(/Client/))
     end
@@ -92,7 +92,7 @@ RSpec.describe 'Api::V1::Projects', type: :request do
             params: { status: 'nonexistent' }.to_json,
             headers: headers
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it 'recalculates progress when recalculate param is present' do

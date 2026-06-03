@@ -94,10 +94,10 @@ module Api
       end
 
       def project_params
-        params.require(:project).permit(
-          :name, :client, :description, :status,
-          :progress, :color, :deadline, :category,
-          tag_list: []
+        params.expect(
+          project: [:name, :client, :description, :status,
+                    :progress, :color, :deadline, :category,
+                    { tag_list: [] }]
         )
       end
 
