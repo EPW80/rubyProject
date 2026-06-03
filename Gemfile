@@ -11,7 +11,7 @@ gem 'rack-cors'
 gem 'rails', '~> 8.0'
 
 # Auth
-gem 'devise', '~> 4.9'
+gem 'devise', '~> 5.0'
 gem 'devise-jwt', '~> 0.12'
 
 # Authorization
@@ -47,5 +47,7 @@ group :test do
 end
 
 group :development do
+  gem 'brakeman', require: false
+  gem 'bundler-audit', require: false
   gem 'rubocop-rails', require: false
 end

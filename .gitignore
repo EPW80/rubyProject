@@ -6,6 +6,7 @@
 .vscode/
 *.env
 .env*
+!.env.example
 log/*.log
 tmp/*
 !tmp/.keep

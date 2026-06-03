@@ -21,12 +21,6 @@ module Studioflow
     config.middleware.use ActionDispatch::Cookies
     config.session_store :cookie_store, key: '_studioflow_session'
     config.middleware.use config.session_store, config.session_options
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', headers: :any, methods: %i[get post put patch delete options head]
-      end
-    end
+    # CORS is configured in config/initializers/cors.rb (ENV-driven allowlist).
   end
 end

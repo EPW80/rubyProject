@@ -20,7 +20,8 @@ module Api
 
         # The token is denylisted by devise-jwt's revocation middleware on the
         # way out, so logout is idempotent and always reports success.
-        def respond_to_on_destroy
+        # Devise 5 passes non_navigational_status:, which we accept and ignore.
+        def respond_to_on_destroy(**)
           render json: { message: 'Logged out successfully.' }, status: :ok
         end
       end
