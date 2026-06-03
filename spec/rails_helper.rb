@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+require 'simplecov'
+
+SimpleCov.start 'rails' do
+  enable_coverage :branch
+  add_filter '/spec/'
+  add_filter '/config/'
+  add_filter '/bin/'
+  minimum_coverage line: 90, branch: 65
+end
+
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'

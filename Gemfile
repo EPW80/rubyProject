@@ -38,6 +38,10 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 6.0'
 end
 
+group :test do
+  gem 'simplecov', '~> 0.22', require: false
+end
+
 group :development do
   gem 'rubocop-rails', require: false
 end
