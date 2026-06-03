@@ -9,21 +9,8 @@ class ApplicationController < ActionController::API
 
   private
 
-  def authenticate_user!
-    token = request.headers['Authorization']&.split&.last
-    return unauthorized unless token
-
-    payload = JWT.decode(token, jwt_secret, true, algorithm: 'HS256').first
-    @current_user = User.find(payload['sub'])
-  rescue JWT::DecodeError, ActiveRecord::RecordNotFound
-    unauthorized
-  end
-
-  attr_reader :current_user
-
-  def jwt_secret
-    ENV.fetch('JWT_SECRET_KEY')
-  end
+  # `authenticate_user!` and `current_user` are provided by Devise; request
+  # authentication is stateless via the devise-jwt Warden strategy.
 
   def forbidden
     render json: { errors: ['Forbidden'] }, status: :forbidden
@@ -31,9 +18,5 @@ class ApplicationController < ActionController::API
 
   def not_found
     render json: { errors: ['Not found'] }, status: :not_found
-  end
-
-  def unauthorized
-    render json: { errors: ['Unauthorized'] }, status: :unauthorized
   end
 end

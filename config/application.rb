@@ -16,6 +16,12 @@ module Studioflow
     config.time_zone = 'UTC'
     config.active_record.schema_format = :ruby
 
+    # Devise/Warden need cookies + session middleware for sign_in/sign_out even
+    # though request authentication itself is stateless via JWT (devise-jwt).
+    config.middleware.use ActionDispatch::Cookies
+    config.session_store :cookie_store, key: '_studioflow_session'
+    config.middleware.use config.session_store, config.session_options
+
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'

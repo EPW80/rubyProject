@@ -13,4 +13,22 @@ Devise.setup do |config|
   config.email_regexp = /\A[^@\s]+@[^@\s]+\z/
   config.reset_password_within = 6.hours
   config.sign_out_via = :delete
+
+  # API-only: no HTML/navigational responses, so Devise returns status codes
+  # (401/422) instead of redirecting with flash messages.
+  config.navigational_formats = []
+
+  # ==> JWT (devise-jwt)
+  # Tokens are dispatched on login and revoked (denylisted) on logout.
+  config.jwt do |jwt|
+    jwt.secret = ENV.fetch('JWT_SECRET_KEY')
+    jwt.dispatch_requests = [
+      ['POST', %r{^/api/v1/login$}],
+      ['POST', %r{^/api/v1/signup$}]
+    ]
+    jwt.revocation_requests = [
+      ['DELETE', %r{^/api/v1/logout$}]
+    ]
+    jwt.expiration_time = 1.day.to_i
+  end
 end
