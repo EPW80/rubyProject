@@ -1,0 +1,57 @@
+# Kamal deploy configuration for studioFlow.
+# Replace the placeholder host/registry/user values before deploying.
+# Secrets are resolved from .kamal/secrets. Docs: https://kamal-deploy.org
+
+# Name of your application. Used to uniquely configure containers.
+service: studioflow
+
+# Name of the container image.
+image: your-user/studioflow
+
+# Deploy to these servers.
+servers:
+  web:
+    - YOUR_SERVER_IP
+  # job:
+  #   hosts:
+  #     - YOUR_SERVER_IP
+  #   cmd: bin/jobs
+
+# Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
+proxy:
+  ssl: true
+  host: api.example.com
+  # Thruster listens on port 80 inside the container.
+  app_port: 80
+
+# Credentials for your image host.
+registry:
+  # Specify the registry server if you're not using Docker Hub (e.g. ghcr.io).
+  # server: ghcr.io
+  username: your-user
+
+  # Always use an access token rather than real password (pulled from .kamal/secrets).
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Configure builder setup.
+builder:
+  arch: amd64
+
+# Inject ENV variables into containers (secrets come from .kamal/secrets).
+# This app is configured entirely via ENV (no Rails credentials / master.key).
+env:
+  clear:
+    RAILS_LOG_TO_STDOUT: "true"
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_URL
+    - JWT_SECRET_KEY
+    - ALLOWED_ORIGINS
+
+# Aliases are triggered with "bin/kamal <alias>".
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"

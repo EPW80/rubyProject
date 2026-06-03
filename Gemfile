@@ -8,11 +8,11 @@ gem 'bootsnap', require: false
 gem 'pg', '~> 1.5'
 gem 'puma', '~> 6.0'
 gem 'rack-cors'
-gem 'rails', '~> 7.2'
+gem 'rails', '~> 8.0'
 
 # Auth
-gem 'devise', '~> 4.9'
-gem 'jwt', '~> 2.8'
+gem 'devise', '~> 5.0'
+gem 'devise-jwt', '~> 0.12'
 
 # Authorization
 gem 'pundit', '~> 2.4'
@@ -21,13 +21,17 @@ gem 'pundit', '~> 2.4'
 gem 'jsonapi-serializer', '~> 2.2'
 
 # Pagination
-gem 'will_paginate', '~> 4.0'
+gem 'pagy', '~> 9.3'
 
 # Soft deletes
 gem 'discard', '~> 1.4'
 
 # Rate limiting
 gem 'rack-attack', '~> 6.7'
+
+# Deployment: containerized HTTP/2 proxy (Thruster) and zero-downtime deploys (Kamal)
+gem 'kamal', '~> 2.4', require: false
+gem 'thruster', '~> 0.1', require: false
 
 group :development, :test do
   gem 'database_cleaner-active_record', '~> 2.1'
@@ -38,6 +42,15 @@ group :development, :test do
   gem 'shoulda-matchers', '~> 6.0'
 end
 
+group :test do
+  gem 'simplecov', '~> 0.22', require: false
+end
+
 group :development do
+  gem 'brakeman', require: false
+  gem 'bundler-audit', require: false
+  gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec_rails', require: false
 end

@@ -8,50 +8,70 @@ Built to demonstrate production-level Rails API development
 
 | Layer         | Technology                                |
 | ------------- | ----------------------------------------- |
-| Backend       | Ruby on Rails 7 (API mode)                |
+| Backend       | Ruby on Rails 8.1 (API mode)              |
 | Database      | PostgreSQL (with JSONB & array columns)   |
-| Auth          | Devise + JWT (hand-rolled)                |
+| Auth          | Devise + devise-jwt (stateless JWT)       |
 | Serialization | jsonapi-serializer                        |
-| Testing       | RSpec + FactoryBot + Shoulda-matchers     |
-| Style linting | RuboCop                                   |
+| Pagination    | pagy                                      |
+| Testing       | RSpec + FactoryBot + Shoulda + SimpleCov  |
+| Style linting | RuboCop (+ performance/rspec plugins)     |
+| Security      | Brakeman + bundler-audit + Dependabot     |
 | Soft deletes  | discard gem                               |
 | Rate limiting | rack-attack                               |
 | Version ctrl  | Git / GitHub (feature branch workflow)    |
-| Deployment    | AWS EC2 + RDS (target, not automated yet) |
+| Deployment    | Docker (multi-stage) + Thruster + Kamal   |
 
 ---
 
 ## Architecture
 
-Rails 7 API-only application. Frontend is a separate repository.
+Rails 8.1 API-only application. Frontend is a separate repository.
 
 ```text
 studioFlow/
 ├── app/
 │   ├── controllers/
 │   │   └── api/v1/            # Versioned REST controllers
-│   ├── models/                # ActiveRecord models
+│   │       └── auth/          # devise-jwt session/registration controllers
+│   ├── models/                # ActiveRecord models (incl. JwtDenylist)
 │   ├── serializers/           # JSONAPI serializers
 │   └── policies/              # Pundit authorization
 ├── db/
 │   ├── migrate/               # Schema migrations
 │   └── seeds.rb               # Development seed data
 ├── config/
+│   ├── deploy.yml             # Kamal deployment config
 │   └── initializers/
+│       ├── cors.rb            # ALLOWED_ORIGINS allowlist
+│       ├── devise.rb          # devise-jwt dispatch/revocation
+│       ├── pagy.rb            # Pagination defaults
 │       └── rack_attack.rb     # API rate limiting
-├── spec/                      # RSpec test suite
+├── spec/                      # RSpec test suite (SimpleCov-gated)
 │   ├── models/
 │   ├── requests/
 │   └── factories/
 ├── .github/
+│   ├── dependabot.yml         # Automated dependency PRs
 │   └── workflows/
-│       └── ci.yml             # GitHub Actions CI
+│       └── ci.yml             # GitHub Actions: test, lint, security
+├── Dockerfile                 # Production multi-stage image (Thruster, Kamal)
+├── Dockerfile.dev             # Dev/test image used by docker-compose
 └── docker-compose.yml         # Local development environment
 ```
 
 ---
 
 ## Rails API Endpoints
+
+### Auth
+
+| Method | Endpoint          | Description                                              |
+| ------ | ----------------- | ------------------------------------------------------- |
+| POST   | `/api/v1/signup`  | Register; returns a JWT in the `Authorization` header   |
+| POST   | `/api/v1/login`   | Authenticate; returns a JWT in the `Authorization` header |
+| DELETE | `/api/v1/logout`  | Revoke the current JWT (denylist)                       |
+
+All other endpoints require `Authorization: Bearer <token>`.
 
 ### Projects
 
@@ -65,34 +85,26 @@ studioFlow/
 | PATCH  | `/api/v1/projects/:id/update_status` | Change status (transactional)         |
 | GET    | `/api/v1/projects/:id/activity`      | Paginated activity log (25/page)      |
 
-### Milestones
+### Milestones & Dashboard (Planned)
 
-| Method | Endpoint                          | Description      |
-| ------ | --------------------------------- | ---------------- |
-| GET    | `/api/v1/projects/:id/milestones` | List milestones  |
-| POST   | `/api/v1/projects/:id/milestones` | Create milestone |
-| PUT    | `/api/v1/milestones/:id`          | Update milestone |
-| DELETE | `/api/v1/milestones/:id`          | Delete milestone |
-
-### Dashboard
-
-| Method | Endpoint                  | Description            |
-| ------ | ------------------------- | ---------------------- |
-| GET    | `/api/v1/dashboard/stats` | Aggregated KPI data    |
-| GET    | `/api/v1/activity_feed`   | Cross-project activity |
+Milestone CRUD (`/api/v1/projects/:id/milestones`) and dashboard endpoints
+(`/api/v1/dashboard/stats`, `/api/v1/activity_feed`) are on the roadmap and not
+yet routed. The `Milestone` model and per-project `activity` endpoint exist today.
 
 ---
 
 ## Key Features
 
-- **Authenticated REST API** — JWT-based auth via Devise, role-based access via Pundit
+- **Authenticated REST API** — stateless JWT auth via Devise + devise-jwt (login/signup/logout with token revocation via a denylist), role-based access via Pundit
 - **Project lifecycle tracking** — Status transitions (backlog → active → review → completed)
 - **Auto progress calculation** — Derived from milestone completion percentage, recalculated atomically within a database transaction
 - **Soft deletes** — Projects are discarded (not hard-deleted), preserving audit trails and enabling recovery via `discard` gem
 - **Paginated activity log** — Per-project audit history surfaced via API (25 entries/page), with eager-loaded user associations
 - **Tag validation** — `tag_list` capped at 20 tags, each under 50 characters
 - **Rate limiting** — 60 requests/min per IP on all API routes; 10 POSTs/min to prevent abuse via `rack-attack`
-- **CI pipeline** — GitHub Actions runs RSpec + RuboCop on every push and PR
+- **CORS allowlist** — origins restricted via the `ALLOWED_ORIGINS` env var (no wildcard); secure default of no cross-origin when unset
+- **Security scanning** — Brakeman (static analysis) and bundler-audit (dependency advisories) run in CI; Dependabot opens update PRs
+- **CI pipeline** — GitHub Actions runs RSpec (SimpleCov-gated), RuboCop, and security scans on every push and PR
 
 ---
 
@@ -102,18 +114,15 @@ studioFlow/
 # Clone
 git clone https://github.com/EPW80/studioFlow.git && cd studioFlow
 
-# Install dependencies
-bundle install
-cp .env.example .env          # set DATABASE_URL, JWT_SECRET_KEY
-
-# Database
-bin/rails db:create db:migrate db:seed
+# Install dependencies + prepare DB (idempotent)
+cp .env.example .env          # set DATABASE_URL, JWT_SECRET_KEY, ALLOWED_ORIGINS
+bin/setup --skip-server       # bundle install + db:prepare
 
 # Start server
 bin/rails server               # http://localhost:3000
 
-# Or via Docker (runs migrations + starts server)
-docker compose up
+# Or via Docker (runs the test suite)
+docker compose run --rm api bundle exec rspec
 ```
 
 ---
@@ -121,10 +130,12 @@ docker compose up
 ## Testing
 
 ```bash
-bundle exec rspec                    # Full suite
+bundle exec rspec                    # Full suite (SimpleCov: 90% line / 65% branch gate)
 bundle exec rspec spec/models        # Models only
 bundle exec rspec spec/requests      # API integration tests
 bundle exec rubocop                  # Lint
+bundle exec brakeman                 # Static security analysis
+bundle exec bundle-audit check --update  # Dependency advisories
 
 # Or via Docker
 docker compose run --rm api bundle exec rspec
@@ -146,9 +157,10 @@ PRs squash-merged into `main`.
 
 ## Relevant Skills Demonstrated
 
-- **Ruby on Rails** — API mode, ActiveRecord, serializers (JSON:API), Pundit authorization, RSpec
+- **Ruby on Rails 8** — API mode, ActiveRecord, serializers (JSON:API), Pundit authorization, pagy pagination, RSpec
 - **PostgreSQL** — JSONB columns, array columns, GIN indexes, soft-delete patterns
-- **Security** — JWT auth, Pundit policies, rack-attack rate limiting, fail-loud secret management
-- **Testing** — RSpec request + model specs, FactoryBot, Shoulda-matchers, 31-test suite
-- **CI/CD** — GitHub Actions pipeline (RSpec + RuboCop on push/PR)
+- **Security** — devise-jwt auth with token revocation, Pundit policies, CORS allowlist, rack-attack rate limiting, Brakeman + bundler-audit scanning, fail-loud secret management
+- **Testing** — RSpec request + model specs, FactoryBot, Shoulda-matchers, SimpleCov coverage gate (43-example suite)
+- **CI/CD** — GitHub Actions pipeline (RSpec + RuboCop + security scans on push/PR), Dependabot
+- **Deployment** — Multi-stage Docker image (Thruster), Kamal config
 - **Git** — Feature branches, conventional commits, PR-based workflow

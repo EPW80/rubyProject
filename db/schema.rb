@@ -10,67 +10,73 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_01_01_000006) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_03_000001) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
+  enable_extension "pg_catalog.plpgsql"
 
   create_table "activity_logs", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "user_id"
     t.string "action", null: false
-    t.jsonb "metadata", default: {}
     t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}
+    t.bigint "project_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
     t.index ["created_at"], name: "index_activity_logs_on_created_at"
     t.index ["project_id"], name: "index_activity_logs_on_project_id"
     t.index ["user_id"], name: "index_activity_logs_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "user_id", null: false
     t.text "body", null: false
     t.datetime "created_at", null: false
+    t.bigint "project_id", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["project_id"], name: "index_comments_on_project_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.datetime "exp", null: false
+    t.string "jti", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
   create_table "milestones", force: :cascade do |t|
+    t.boolean "completed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.datetime "due_date"
     t.bigint "project_id", null: false
     t.string "title", null: false
-    t.text "description"
-    t.boolean "completed", default: false, null: false
-    t.datetime "due_date"
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_milestones_on_project_id"
   end
 
   create_table "project_memberships", force: :cascade do |t|
-    t.bigint "project_id", null: false
-    t.bigint "user_id", null: false
-    t.string "role", default: "member"
     t.datetime "created_at", null: false
+    t.bigint "project_id", null: false
+    t.string "role", default: "member"
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
     t.index ["project_id", "user_id"], name: "index_project_memberships_on_project_id_and_user_id", unique: true
     t.index ["project_id"], name: "index_project_memberships_on_project_id"
     t.index ["user_id"], name: "index_project_memberships_on_user_id"
   end
 
   create_table "projects", force: :cascade do |t|
-    t.bigint "owner_id", null: false
-    t.string "name", null: false
-    t.string "client", null: false
-    t.text "description"
-    t.string "status", default: "backlog", null: false
-    t.integer "progress", default: 0, null: false
-    t.string "color"
-    t.datetime "deadline"
     t.string "category"
-    t.string "tag_list", default: [], array: true
-    t.datetime "discarded_at"
+    t.string "client", null: false
+    t.string "color"
     t.datetime "created_at", null: false
+    t.datetime "deadline"
+    t.text "description"
+    t.datetime "discarded_at"
+    t.string "name", null: false
+    t.bigint "owner_id", null: false
+    t.integer "progress", default: 0, null: false
+    t.string "status", default: "backlog", null: false
+    t.string "tag_list", default: [], array: true
     t.datetime "updated_at", null: false
     t.index ["discarded_at"], name: "index_projects_on_discarded_at"
     t.index ["owner_id"], name: "index_projects_on_owner_id"
@@ -79,9 +85,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_01_01_000006) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
-    t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
