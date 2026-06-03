@@ -370,7 +370,7 @@ DEPENDENCIES
   database_cleaner-active_record (~> 2.1)
   debug
   devise (~> 5.0)
-  devise-jwt (~> 0.12)
+  devise-jwt (~> 0.13)
   discard (~> 1.4)
   factory_bot_rails (~> 6.4)
   faker (~> 3.2)

@@ -12,7 +12,7 @@ gem 'rails', '~> 8.0'
 
 # Auth
 gem 'devise', '~> 5.0'
-gem 'devise-jwt', '~> 0.12'
+gem 'devise-jwt', '~> 0.13'
 
 # Authorization
 gem 'pundit', '~> 2.4'
