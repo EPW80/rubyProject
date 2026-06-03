@@ -30,3 +30,12 @@ coverage/
 
 # IDE
 .idea/
+
+# External skills library (Claude Code tooling, not part of this project)
+skills-main/
+
+# Claude Code context file
+CONTEXT.md
+
+# Placeholder binary assets (API-only app has no browser UI)
+public/icon.png
