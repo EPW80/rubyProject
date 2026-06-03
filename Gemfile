@@ -6,7 +6,7 @@ ruby '3.3.10'
 
 gem 'bootsnap', require: false
 gem 'pg', '~> 1.5'
-gem 'puma', '~> 6.0'
+gem 'puma', '~> 8.0'
 gem 'rack-cors'
 gem 'rails', '~> 8.0'
 
