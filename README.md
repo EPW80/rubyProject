@@ -110,19 +110,28 @@ yet routed. The `Milestone` model and per-project `activity` endpoint exist toda
 
 ## Development Setup
 
+### Docker (recommended — no local Ruby needed)
+
 ```bash
-# Clone
 git clone https://github.com/EPW80/studioFlow.git && cd studioFlow
 
-# Install dependencies + prepare DB (idempotent)
+.claude/skills/run-studioflow/start.sh   # idempotent: brings up db + api on :3000
+.claude/skills/run-studioflow/smoke.sh   # end-to-end check: signup → JWT → CRUD → logout
+.claude/skills/run-studioflow/stop.sh    # tear down (postgres volume preserved)
+```
+
+`start.sh` builds the dev image on first run (~25s), runs `db:prepare`, and launches
+Rails in development mode against a postgres container. See
+[`.claude/skills/run-studioflow/SKILL.md`](.claude/skills/run-studioflow/SKILL.md) for
+endpoints, gotchas (stale pidfile, the `status` enum, JWT in response headers), and
+the `docker compose run` invocations for tests.
+
+### Bare metal (requires Ruby 3.3.10 + PostgreSQL locally)
+
+```bash
 cp .env.example .env          # set DATABASE_URL, JWT_SECRET_KEY, ALLOWED_ORIGINS
 bin/setup --skip-server       # bundle install + db:prepare
-
-# Start server
-bin/rails server               # http://localhost:3000
-
-# Or via Docker (runs the test suite)
-docker compose run --rm api bundle exec rspec
+bin/rails server              # http://localhost:3000
 ```
 
 ---
