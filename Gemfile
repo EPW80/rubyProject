@@ -30,7 +30,7 @@ gem 'discard', '~> 1.4'
 gem 'rack-attack', '~> 6.7'
 
 # Deployment: containerized HTTP/2 proxy (Thruster) and zero-downtime deploys (Kamal)
-gem 'kamal', '~> 2.4', require: false
+gem 'kamal', '~> 2.12', require: false
 gem 'thruster', '~> 0.1', require: false
 
 group :development, :test do
