@@ -1,6 +1,6 @@
 # Development / test image used by docker-compose to run the suite.
 # The production image lives in ./Dockerfile (multi-stage, used by Kamal).
-FROM ruby:3.3.10-slim
+FROM ruby:4.0.6-slim
 
 RUN apt-get update -qq && \
     apt-get install -y --no-install-recommends \
