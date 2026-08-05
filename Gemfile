@@ -8,7 +8,7 @@ gem 'bootsnap', require: false
 gem 'pg', '~> 1.5'
 gem 'puma', '~> 6.0'
 gem 'rack-cors'
-gem 'rails', '~> 8.0'
+gem 'rails', '~> 8.1'
 
 # Auth
 gem 'devise', '~> 5.0'
