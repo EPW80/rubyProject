@@ -43,7 +43,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'simplecov', '~> 0.22', require: false
+  gem 'simplecov', '~> 1.1', require: false
 end
 
 group :development do
